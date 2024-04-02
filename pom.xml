@@ -125,6 +125,18 @@
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.4.3</version>
+                <configuration>
+                    <from>
+                        <image>eclipse-temurin:21-jre-alpine</image>
+                    </from>
+                    <to>
+                        <image>iamludal/jib-demo:jib</image>
+                        <auth>
+                            <username>${env.DOCKER_WRITER_USER}</username>
+                            <password>${env.DOCKER_WRITER_PASSWD}</password>
+                        </auth>
+                    </to>
+                </configuration>
             </plugin>
         </plugins>
     </build>
