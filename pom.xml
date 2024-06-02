@@ -15,6 +15,7 @@
     <description>jib-demo</description>
     <properties>
         <java.version>21</java.version>
+        <jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
     </properties>
     <dependencies>
         <!-- Spring Boot Starter -->
@@ -124,10 +125,20 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>3.4.3</version>
+                <version>${jib-maven-plugin.version}</version>
                 <configuration>
                     <from>
                         <image>eclipse-temurin:21-jre-alpine</image>
+                        <platforms>
+                            <platform>
+                                <architecture>arm64</architecture>
+                                <os>linux</os>
+                            </platform>
+                            <platform>
+                                <architecture>amd64</architecture>
+                                <os>linux</os>
+                            </platform>
+                        </platforms>
                     </from>
                     <to>
                         <image>iamludal/jib-demo:jib</image>
@@ -136,9 +147,56 @@
                             <password>${env.DOCKER_WRITER_PASSWD}</password>
                         </auth>
                     </to>
+                    <extraDirectories>
+                        <paths>
+                            <path>
+                                <from>src/main/resources/jib</from>
+                                <into>/app</into>
+                            </path>
+                        </paths>
+                    </extraDirectories>
+                    <container>
+                        <jvmFlags>
+                            <jvmFlag>-javaagent:/app/datadog-agent.jar</jvmFlag>
+                        </jvmFlags>
+                        <environment>
+                            <APP_VERSION>${project.version}</APP_VERSION>
+                        </environment>
+                    </container>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>testing</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <version>${jib-maven-plugin.version}</version>
+                        <configuration>
+                            <extraDirectories>
+                                <paths>
+                                    <path>
+                                        <from>src/main/resources/jib</from>
+                                        <into>/app</into>
+                                        <includes>jacocoagent.jar</includes>
+                                    </path>
+                                </paths>
+                            </extraDirectories>
+                            <container>
+                                <jvmFlags>
+                                    <jvmFlag>-javaagent:/app/jacocoagent.jar</jvmFlag>
+                                </jvmFlags>
+                            </container>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
