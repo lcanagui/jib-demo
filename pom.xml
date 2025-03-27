@@ -141,7 +141,7 @@
                         </platforms>
                     </from>
                     <to>
-                        <image>iamludal/jib-demo-${project.artifactId}:jib</image>
+                        <image>lcanagui/jib-demo-${project.artifactId}:jib</image>
                         <auth>
                             <username>${env.DOCKER_WRITER_USER}</username>
                             <password>${env.DOCKER_WRITER_PASSWD}</password>
